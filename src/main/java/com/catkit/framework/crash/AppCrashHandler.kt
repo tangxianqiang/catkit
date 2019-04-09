@@ -28,5 +28,6 @@ internal class AppCrashHandler(private val appCtx: Application) : Thread.Uncaugh
 
     override fun uncaughtException(t: Thread?, e: Throwable?) {
 
+
     }
 }
