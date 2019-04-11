@@ -32,6 +32,7 @@ object AppUtil {
      * Bellow Android 28, it is versionCode return.
      * @return -1: error
      */
+    @Suppress("DEPRECATION")
     fun getVersionCode(): Long {
         val ctx = CatkitApplication.appCtx
         return try {
@@ -65,6 +66,7 @@ object AppUtil {
      * Bellow Android 28, it is signatures return, or apkContentsSigners.
      * @return null: error
      */
+    @Suppress("DEPRECATION")
     fun getSignature(): Array<Signature>? {
         val ctx = CatkitApplication.appCtx
         return try {
@@ -73,7 +75,7 @@ object AppUtil {
                 val packageInfo = packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
                 packageInfo?.signingInfo?.apkContentsSigners
             } else {
-                val packageInfo = packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_SIGNATURES)
+                val packageInfo = packageManager.getPackageInfo(ctx.packageName, @Suppress("DEPRECATION") PackageManager.GET_SIGNATURES)
                 packageInfo?.signatures
             }
         } catch (e: PackageManager.NameNotFoundException) {

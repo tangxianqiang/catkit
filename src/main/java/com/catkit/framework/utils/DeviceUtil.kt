@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import android.support.annotation.RequiresApi
 import android.support.annotation.RequiresPermission
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
@@ -13,7 +12,6 @@ import com.catkit.framework.CatkitApplication
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.lang.StringBuilder
 import java.math.BigInteger
 import java.net.NetworkInterface
 import java.net.SocketException
@@ -55,7 +53,7 @@ object DeviceUtil {
             imei = if (Build.VERSION.SDK_INT > 25) {
                 phoneManager.imei
             } else {
-                @Suppress("DEPRECATION")phoneManager.deviceId
+                @Suppress("DEPRECATION") phoneManager.deviceId
             }
         }
         return imei
@@ -101,7 +99,7 @@ object DeviceUtil {
      */
     @SuppressLint("HardwareIds")
     fun getAndroidId(): String {
-        var androidId: String = String()
+        var androidId = String()
         val ctx: Context = CatkitApplication.appCtx
         ctx?.let {
             val id = Settings.Secure.getString(ctx.contentResolver, Settings.Secure.ANDROID_ID)
@@ -116,7 +114,7 @@ object DeviceUtil {
      * @return SERIAL, eg: 01b4549262d6a4a2
      */
     @RequiresPermission(android.Manifest.permission.READ_PHONE_STATE)
-    fun getSerialNumber(): String? = if (Build.VERSION.SDK_INT > 25) android.os.Build.getSerial() else @Suppress("DEPRECATION")android.os.Build.SERIAL
+    fun getSerialNumber(): String? = if (Build.VERSION.SDK_INT > 25) android.os.Build.getSerial() else @Suppress("DEPRECATION") android.os.Build.SERIAL
 
     /**
      * The CPU serial number, error like "0000000000000000"
@@ -160,12 +158,12 @@ object DeviceUtil {
      * </p>
      */
     fun getUniqueDeviceId(): String {
-        var uniqueDeviceId = String()
+        var uniqueDeviceId: String
         val ctx = CatkitApplication.appCtx
         ctx ?: return ""
 
         val preferences = ctx.getSharedPreferences("device__prefs", Context.MODE_PRIVATE)
-        var deviceId: String? = preferences.getString("device_id", null)
+        val deviceId: String? = preferences.getString("device_id", null)
         if (!deviceId.isNullOrEmpty()) {
             return deviceId
         }
@@ -190,9 +188,19 @@ object DeviceUtil {
         return uniqueDeviceId
     }
 
+    /**
+     * Get the device info and the Application info.
+     * <p>
+     *     Note: Be sure the api run after Application is running.
+     * </p>
+     * <p>
+     *     Note: \r\n is the right way to format lines.
+     * </p>
+     */
     fun getDeviceInfo(): String {
         val deviceInfo = StringBuilder()
         //device info
+        deviceInfo.append("OS            =  ").append(Build.DISPLAY).append("\r\n")
         deviceInfo.append("Manufacturer  =  ").append(Build.MANUFACTURER).append("\r\n")
         deviceInfo.append("Model         =  ").append(Build.MODEL).append("\r\n")
         deviceInfo.append("Brand         =  ").append(Build.BRAND).append("\r\n")
@@ -204,7 +212,7 @@ object DeviceUtil {
         deviceInfo.append("CpuArms       =  ").append(supportABIs).append("\r\n")
         //app info
         deviceInfo.append("PackageName   =  ").append(AppUtil.getPackageName()).append("\r\n")
-        deviceInfo.append("VersionCode   =  ").append(AppUtil.getVersionName()).append("\r\n")
+        deviceInfo.append("VersionCode   =  ").append(AppUtil.getVersionCode()).append("\r\n")
         deviceInfo.append("VersionName   =  ").append(AppUtil.getVersionName()).append("\r\n")
         deviceInfo.append("Signature     =  ").append(AppUtil.getSignature()).append("\r\n")
         deviceInfo.append("IsDebug       =  ").append(CatkitApplication.globalConfig.isDebug).append("\r\n")
@@ -229,6 +237,9 @@ object DeviceUtil {
 
     /**
      * Get the device real height, include NavigationBar height.
+     * <p>
+     *     Note: api getRealMetrics needs android level 17
+     * </p>
      */
     @SuppressLint("NewApi")
     fun getScreenRealHeight(): Int {
@@ -241,7 +252,7 @@ object DeviceUtil {
     /**
      * Get device width.
      */
-    fun getScreenWidth(): Int{
+    fun getScreenWidth(): Int {
         val windowManager: WindowManager = CatkitApplication.appCtx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
