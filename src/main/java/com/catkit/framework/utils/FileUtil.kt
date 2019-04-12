@@ -68,13 +68,34 @@ object FileUtil {
     }
 
     /**
-     * Write a string to file.
+     * Write a string to file.[kotlin.io]
      * @param fullPath the file full string path.
      * @param isAppend append data to the end of file when set true.
      * @param data     a ByteArray data.
      */
     fun writeFile(fullPath: String, isAppend: Boolean, data: ByteArray) {
+        val file = File(fullPath)
+        if (isAppend) {
+            file.appendBytes(data)
+        } else {
+            file.writeBytes(data)
+        }
+    }
 
+    /**
+     * Get text by path.[kotlin.io]
+     */
+    fun readFileString(fullPath: String): String {
+        val file = File(fullPath)
+        return file.readText()
+    }
+
+    /**
+     * Get ByteArray by path.[kotlin.io]
+     */
+    fun readFileByte(fullPath: String): ByteArray {
+        val file = File(fullPath)
+        return file.readBytes()
     }
 
     /**

@@ -6,8 +6,10 @@ import android.os.Environment
 import android.support.annotation.RequiresPermission
 import com.catkit.framework.utils.DeviceUtil
 import com.catkit.framework.utils.FileUtil
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.*
 
 /**
  * Thread catch exception if it has its own UncaughtExceptionHandler.
@@ -20,8 +22,7 @@ import java.util.*
  * @see         Thread.UncaughtExceptionHandler
  * @version     1.0.0
  */
-internal class AppCrashHandler(private val appCtx: Application, private val crashLocalFile: String) : Thread.UncaughtExceptionHandler {
-    private val DEFUALT_ERROR_LOCAL_PATH_EXTRA = "crash"
+internal class AppCrashHandler(private val appCtx: Application, private val crashLocalDir: String) : Thread.UncaughtExceptionHandler {
 
     init {
         Thread.setDefaultUncaughtExceptionHandler(this)
@@ -50,17 +51,57 @@ internal class AppCrashHandler(private val appCtx: Application, private val cras
                 .append(ThrowableUtil.getFullStackTrace(e)).append("\r\n")
         //write error to local file
         if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
-            if (FileUtil.isPathInvalid(crashLocalFile)) {
+            if (FileUtil.isPathInvalid(crashLocalDir)) {
                 if (appCtx.externalCacheDir != null) {
                     //write to file to Android/data/packageName by named default
+                    val filePath = "${appCtx.externalCacheDir!!.absolutePath}${File.separator}$DEFAULT_ERROR_LOCAL_PATH_EXTRA${File.separator}$time"
+                    if (FileUtil.createFile(filePath, true)) {
+                        writeCrashToLocal(errorInfo.toString(), filePath)
+                    }
                 } else {
                     //write to file only to data/data/packageName by named default
+                    val filePath = "${appCtx.cacheDir.absolutePath}${File.separator}$DEFAULT_ERROR_LOCAL_PATH_EXTRA${File.separator}$time"
+                    if (FileUtil.createFile(filePath, true)) {
+                        writeCrashToLocal(errorInfo.toString(), filePath)
+                    }
                 }
             } else {
-
+                val filePath = "$crashLocalDir${File.separator}$time"
+                if (FileUtil.createFile(filePath, true)) {
+                    writeCrashToLocal(errorInfo.toString(), filePath)
+                }
             }
         } else {
             //write to file only to data/data/packageName by named default
+            val filePath = "${appCtx.cacheDir.absolutePath}${File.separator}$DEFAULT_ERROR_LOCAL_PATH_EXTRA${File.separator}$time"
+            if (FileUtil.createFile(filePath, true)) {
+                writeCrashToLocal(errorInfo.toString(), filePath)
+            }
+        }
+    }
+
+    /**
+     * Write info to local by other thread. Besides, Future's get can let you to find the callable's
+     * return immediately.
+     */
+    private fun writeCrashToLocal(crashInfo: String, fullPath: String): Boolean {
+        val submit: Future<Boolean> = Executors.newSingleThreadExecutor().submit(object : Callable<Boolean> {
+            override fun call(): Boolean {
+                return try {
+                    FileUtil.writeFile(fullPath, false, crashInfo)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+        })
+        return try {
+            submit.get()
+        } catch (e: InterruptedException) {
+            false
+        } catch (e: ExecutionException) {
+            false
         }
     }
 

@@ -22,4 +22,5 @@ abstract class CatkitApplication : Application() {
     }
 
     abstract fun initGlobalConfig()
+    abstract fun initLocalConfig()
 }
