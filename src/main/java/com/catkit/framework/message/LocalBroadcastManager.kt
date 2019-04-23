@@ -13,6 +13,7 @@ import android.os.Message
  * <p>
  *     Note: It can not work on different progress.
  * </p>
+ * @constructor LocalBroadcastManager(appCtx: Context) the context most be Application or it maybe leak.
  */
 internal class LocalBroadcastManager(private val appCtx: Context) {
     private var mHandler: Handler

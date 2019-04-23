@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">catkit</string>
+    <string name="default_update_tip_title">Update New Application?</string>
+    <string name="default_update_tip_content">The new version is waiting to update!</string>
+    <string name="confirm">confirm</string>
+    <string name="cancel">cancel</string>
 </resources>

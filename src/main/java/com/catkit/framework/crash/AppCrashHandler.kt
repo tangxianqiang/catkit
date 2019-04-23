@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Environment
 import android.support.annotation.RequiresPermission
+import com.catkit.framework.DEFAULT_ERROR_LOCAL_PATH_EXTRA
 import com.catkit.framework.utils.DeviceUtil
 import com.catkit.framework.utils.FileUtil
 import java.io.File
