@@ -13,10 +13,16 @@ class RequestResult {
     var exception: HttpException? = null
         private set
 
-    constructor(e:HttpException){
+    constructor(e: HttpException) {
         this.exception = e
     }
-    constructor(result: Response){
+
+    constructor(result: Response) {
+        this.mResult = result
+    }
+
+    constructor(e: HttpException, result: Response) {
+        this.exception = e
         this.mResult = result
     }
 

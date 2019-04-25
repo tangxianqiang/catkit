@@ -4,8 +4,8 @@ interface IPost {
 
     /**
      * Post request for http asynchronously.
-     * @param url The Address of post.
-     * @param headers The header of request.
+     * @param url          The Address of post.
+     * @param headers      The header of request.
      * @param stringParams The request data.
      */
     fun postString(url: String, headers: HashMap<String, String>? = null, stringParams: String, callback: OnHttpListener)

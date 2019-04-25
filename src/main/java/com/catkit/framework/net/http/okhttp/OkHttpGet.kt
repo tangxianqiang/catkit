@@ -6,8 +6,8 @@ import java.io.IOException
 object OkHttpGet {
     /**
      * Asynchronous Get.
-     * @param url Address of http get, can not be null.
-     * @param header The header of http get, default null.
+     * @param url      Address of http get, can not be null.
+     * @param header   The header of http get, default null.
      * @param callback The asynchronous get's callback. can not be null.
      */
     fun get(client: OkHttpClient, url: String, header: HashMap<String, String>?, params: HashMap<String, Any>?, callback: OnHttpListener) {
