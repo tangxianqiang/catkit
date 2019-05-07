@@ -35,6 +35,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     //api let other module to use
     api 'com.squareup.okhttp3:okhttp:3.10.0'
+    api 'pub.devrel:easypermissions:2.0.1'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
 }
 repositories {
     mavenCentral()

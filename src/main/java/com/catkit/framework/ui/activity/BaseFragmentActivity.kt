@@ -1,96 +1,20 @@
 package com.catkit.framework.ui.activity
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.FragmentActivity
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
-import com.catkit.framework.ui.BasePresenter
-import com.catkit.framework.ui.Logical
 
+abstract class BaseFragmentActivity : FragmentActivity() {
 
-abstract class BaseActivity <out T : BasePresenter<*>>: AppCompatActivity(), Logical {
     companion object {
-        private const val TAG_STATUS_BAR = "TAG_STATUS_BAR"
-        private const val TAG_OFFSET = "TAG_OFFSET"
-        private const val KEY_OFFSET = -123
+        private val TAG_STATUS_BAR = "TAG_STATUS_BAR"
+        private val TAG_OFFSET = "TAG_OFFSET"
+        private val KEY_OFFSET = -123
     }
-    private var presenter: T? = createPresenter()
-
-    abstract protected fun createPresenter(): T
-
-    fun <E> callPresenter(action: T.() -> E): E? = presenter?.action()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(getLayoutResource())
-        presenter?.onCreate(savedInstanceState)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        presenter?.onCreate(savedInstanceState, persistentState)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        presenter?.onStart()
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        presenter?.onNewIntent(intent)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        presenter?.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        presenter?.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter?.onStop()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        presenter?.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        presenter?.onRestoreInstanceState(savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter?.onDestroy()
-        presenter = null
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        presenter?.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        presenter?.onActivityResult(requestCode, resultCode, data)
-    }
-
-
-    abstract fun getLayoutResource(): Int
 
     fun getStatusBarHeight(): Int {
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -117,7 +41,7 @@ abstract class BaseActivity <out T : BasePresenter<*>>: AppCompatActivity(), Log
         view.tag = TAG_OFFSET
         val haveSetOffset = view.getTag(KEY_OFFSET)
         if (haveSetOffset != null && haveSetOffset as Boolean) return
-        val layoutParams = view.layoutParams as MarginLayoutParams
+        val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.setMargins(layoutParams.leftMargin,
                 layoutParams.topMargin + getStatusBarHeight(),
                 layoutParams.rightMargin,
@@ -131,7 +55,7 @@ abstract class BaseActivity <out T : BasePresenter<*>>: AppCompatActivity(), Log
         view.tag = TAG_OFFSET
         val haveSetOffset = view.getTag(KEY_OFFSET)
         if (haveSetOffset != null && haveSetOffset as Boolean) return
-        val layoutParams = view.layoutParams as MarginLayoutParams
+        val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.setMargins(layoutParams.leftMargin,
                 layoutParams.topMargin - getStatusBarHeight(),
                 layoutParams.rightMargin,
@@ -141,7 +65,7 @@ abstract class BaseActivity <out T : BasePresenter<*>>: AppCompatActivity(), Log
 
     fun setStatusBarLightMode(isLightMode: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val decorView = window?.decorView
+            val decorView = window.decorView
             if (decorView != null) {
                 var vis = decorView.systemUiVisibility
                 if (isLightMode) {
@@ -243,5 +167,4 @@ abstract class BaseActivity <out T : BasePresenter<*>>: AppCompatActivity(), Log
             decorView.systemUiVisibility = decorView.systemUiVisibility or uiOptions
         }
     }
-
 }
